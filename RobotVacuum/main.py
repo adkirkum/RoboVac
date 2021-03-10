@@ -3,7 +3,7 @@
 import time
 import ControlDriveSteppers
 
-'''
+
 import RPi.GPIO as GPIO
 # GPIO Mode (BOARD / BCM)
 GPIO.setmode(GPIO.BCM)
@@ -24,7 +24,7 @@ GPIO.setup(GPIO_DIR_R, GPIO.OUT)
 GPIO.setup(GPIO_STEP_L, GPIO.OUT)
 GPIO.setup(GPIO_DIR_L, GPIO.OUT)
 
-
+'''
 def distance():
     # set Trigger to HIGH
     GPIO.output(GPIO_TRIGGER, True)

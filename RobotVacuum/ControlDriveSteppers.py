@@ -14,7 +14,7 @@ class ControlDriverSteppers:
         :integer degrees: degrees change from current heading
         :RotateDir direction: disambiguate which way to rotate
         """
-        steps_per_full_rot = 255    # TODO: This value is probably not correct... just a placeholder
+        steps_per_full_rot = 200    # TODO: This value is probably not correct... just a placeholder
         steps_for_turn = (steps_per_full_rot * (degrees / 360)) / 2   # Divide by 2 because both motors are turning
 
         # Do all rotation in place before moving forward

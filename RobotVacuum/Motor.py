@@ -12,9 +12,12 @@ class Motor:
     # TODO: Negate commands for the motor needs to be driven backwards here so we don't have to worry about it later
     # TODO: Probably want to add all motor sequencing into this class
     # TODO: Figure out micro-stepping and apply it to help when step_motor steps is not an integer
-
+        #Step motor steps will probably always be an integer, unless we dynamically adjust microstep setting
+        #on controller (we totally could).  So 14.625 steps would be
+        # - Step 14 times
+        # - Switch to 1/8th step setting, then step 5 times
     @staticmethod
-    def step_motor(steps, direction):
+    def step_motor(delay_time, steps, direction):
         # TODO: Finish method to actually step the motors
         dir_string = "forward" if direction == GenConfig.MotorDir.FORWARD else "reverse"
         print("Moving " + str(steps) + " in direction " + dir_string)
