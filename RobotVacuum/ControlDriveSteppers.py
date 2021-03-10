@@ -3,7 +3,7 @@ from GenConfig import MotorDir
 import Motor
 
 
-class ControlDiverSteppers:
+class ControlDriverSteppers:
     def __init__(self):
         self.__motor_l = Motor.Motor(20, 13, 19, 0)
         self.__motor_r = Motor.Motor(20, 23, 22, 1)

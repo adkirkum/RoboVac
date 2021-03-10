@@ -153,5 +153,5 @@ if __name__ == '__main__':
         GPIO.cleanup()
 '''
 if __name__ == '__main__':
-    driver = ControlDriveSteppers.ControlDiverSteppers()
+    driver = ControlDriveSteppers.ControlDriverSteppers()
     driver.turn_then_drive(100, 180, ControlDriveSteppers.RotateDir.CLOCKWISE)
