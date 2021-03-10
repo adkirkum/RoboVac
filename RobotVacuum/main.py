@@ -8,23 +8,25 @@ from Motor import Motor
 
 import RPi.GPIO as GPIO
 # GPIO Mode (BOARD / BCM)
+
+
 GPIO.setmode(GPIO.BCM)
 
 # set GPIO Pins
-GPIO_TRIGGER = 26
-GPIO_ECHO = 20
+# GPIO_TRIGGER = 26
+# GPIO_ECHO = 20
 # GPIO_STEP_R = 23
 # GPIO_DIR_R = 22
-GPIO_STEP_L = 13
-GPIO_DIR_L = 19
+# GPIO_STEP_L = 13
+# GPIO_DIR_L = 19
 
 # set GPIO direction (IN / OUT)
-GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
-GPIO.setup(GPIO_ECHO, GPIO.IN)
+# GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
+# GPIO.setup(GPIO_ECHO, GPIO.IN)
 # GPIO.setup(GPIO_STEP_R, GPIO.OUT)
 # GPIO.setup(GPIO_DIR_R, GPIO.OUT)
-GPIO.setup(GPIO_STEP_L, GPIO.OUT)
-GPIO.setup(GPIO_DIR_L, GPIO.OUT)
+# GPIO.setup(GPIO_STEP_L, GPIO.OUT)
+# GPIO.setup(GPIO_DIR_L, GPIO.OUT)
 
 '''
 def distance():
@@ -165,7 +167,16 @@ if __name__ == '__main__':
 
     desired_steps = 250
     num_steps_taken = 0
-    while num_steps_taken < desired_steps:
-        next_step_Time_r, stepped_r = m_r.step_motor(time.time(), next_step_time_r, GenConfig.MotorDir.FORWARD, 100)
-        next_step_Time_l, stepped_l = m_l.step_motor(time.time(), next_step_time_l, GenConfig.MotorDir.REVERSE, 100)
-        num_steps_taken = num_steps_taken + 1 if stepped_l else num_steps_taken
+
+    #while num_steps_taken < desired_steps:
+    while True:
+
+        # next_step_Time_r, stepped_r = m_r.step_motor(time.time(), next_step_time_r, GenConfig.MotorDir.FORWARD, 20)
+        # next_step_Time_l, stepped_l = m_l.step_motor(time.time(), next_step_time_l, GenConfig.MotorDir.REVERSE, 20)
+        next_step_Time_r = m_r.step_motor(time.time(), m_r.next_step_tm, GenConfig.MotorDir.FORWARD, 100)
+        next_step_Time_l = m_l.step_motor(time.time(), m_l.next_step_tm, GenConfig.MotorDir.REVERSE, 100)
+
+
+
+        #time.sleep(0.001)
+    GPIO.cleanup()
