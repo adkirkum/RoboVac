@@ -142,6 +142,7 @@ def direction_calc(move_dist, pin):
 if __name__ == '__main__':
 
     try:
+
         while True:
             dist = distance()
             # if dist>150:
@@ -174,16 +175,20 @@ if __name__ == '__main__':
             print("Delay: " +str(sleep_time_L)+"  "+str(sleep_time_R) )
             print("Rpm: " +str(speed_L)+"  "+str(speed_R) )
             print("Dist: " +str(dist_L)+"  "+str(dist_R) )
-            print("Time: " +str(strt_time)+"  "+str(next_step_time_L) )
+            print("Time: " +str(strt_time)+"  "+str(next_step_time_L))
 
             #print strt_time
+'''
             if (next_step_time_L - strt_time) < 0:
                 next_step_time_L = strt_time + sleep_time_L
                 direction_calc(-dist_L,GPIO_DIR_L)
                 GPIO.output(GPIO_STEP_L,True)
                 time.sleep(0.000001)
                 GPIO.output(GPIO_STEP_L,False)
-                flag2 = time.time()
+
+                next_step_time = time.time()
+                while True:
+                    next_step_time, stepped = blah_motor.step(time.time(), next_motor_step, direction, speed)
 
             if (next_step_time_R - strt_time) < 0:
                 next_step_time_R = strt_time + sleep_time_R
@@ -191,7 +196,7 @@ if __name__ == '__main__':
                 GPIO.output(GPIO_STEP_R,True)
                 time.sleep(0.000001)
                 GPIO.output(GPIO_STEP_R,False)
-
+'''
 
             print( " ")
             time.sleep(0.001)

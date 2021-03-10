@@ -2,8 +2,8 @@ from enum import Enum
 
 
 class MotorDir(Enum):
-    FORWARD = 0
-    REVERSE = 1
+    REVERSE = False
+    FORWARD = True
 
 
 class RotateDir(Enum):

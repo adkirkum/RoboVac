@@ -1,7 +1,9 @@
 # Libraries
 
 import time
+import GenConfig
 import ControlDriveSteppers
+from Motor import Motor
 
 
 import RPi.GPIO as GPIO
@@ -11,16 +13,16 @@ GPIO.setmode(GPIO.BCM)
 # set GPIO Pins
 GPIO_TRIGGER = 26
 GPIO_ECHO = 20
-GPIO_STEP_R = 23
-GPIO_DIR_R = 22
+# GPIO_STEP_R = 23
+# GPIO_DIR_R = 22
 GPIO_STEP_L = 13
 GPIO_DIR_L = 19
 
 # set GPIO direction (IN / OUT)
 GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
 GPIO.setup(GPIO_ECHO, GPIO.IN)
-GPIO.setup(GPIO_STEP_R, GPIO.OUT)
-GPIO.setup(GPIO_DIR_R, GPIO.OUT)
+# GPIO.setup(GPIO_STEP_R, GPIO.OUT)
+# GPIO.setup(GPIO_DIR_R, GPIO.OUT)
 GPIO.setup(GPIO_STEP_L, GPIO.OUT)
 GPIO.setup(GPIO_DIR_L, GPIO.OUT)
 
@@ -153,5 +155,18 @@ if __name__ == '__main__':
         GPIO.cleanup()
 '''
 if __name__ == '__main__':
-    driver = ControlDriveSteppers.ControlDriverSteppers()
-    driver.turn_then_drive(100, 180, ControlDriveSteppers.RotateDir.CLOCKWISE)
+    # driver = ControlDriveSteppers.ControlDriverSteppers()
+    # driver.turn_then_drive(100, 180, ControlDriveSteppers.RotateDir.CLOCKWISE)
+    m_r = Motor(20, 23, 22, 0)
+    m_l = Motor(20, 13, 19, 0)
+
+    next_step_time_r = time.time()
+    next_step_time_l = time.time()
+
+    desired_steps = 250
+    num_steps_taken = 0
+    while num_steps_taken < desired_steps:
+        next_step_Time_r, stepped_r = m_r.step_motor(time.time(), next_step_time_r, GenConfig.MotorDir.FORWARD, 100)
+        next_step_Time_l, stepped_l = m_l.step_motor(time.time(), next_step_time_l, GenConfig.MotorDir.REVERSE, 100)
+        num_steps_taken = num_steps_taken + 1 if stepped_l else num_steps_taken
+
