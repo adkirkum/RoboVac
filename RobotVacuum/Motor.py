@@ -11,6 +11,7 @@ class Motor:
         self.dir_pin = dir_pin
         GPIO.setup(step_pin, GPIO.OUT)
         GPIO.setup(dir_pin, GPIO.OUT)
+        self.next_step_tm = 0
         # TODO: Set up GPIO direction (IN/OUT) here for pins above
 
     # takes input rpm and converts to step delay in seconds
@@ -32,6 +33,7 @@ class Motor:
     def step_motor(self, cur_time, next_step_time, direction, speed):
         # TODO: Finish method to actually step the motors
         step_delay = self.speed_calc(speed)
+        #print step_delay
         # dir_string = "forward" if direction == GenConfig.MotorDir.FORWARD else "reverse"
         # print("Moving " + str(steps) + " in direction " + dir_string)
 
@@ -40,8 +42,14 @@ class Motor:
             GPIO.output(self.step_pin, True)
             time.sleep(0.000001)
             GPIO.output(self.step_pin, False)
-            return [next_step_time + step_delay, True]
-        return next_step_time, False
+
+            print "Cur Time:   " + str(cur_time)
+            print "Next Step:  " + str(next_step_time)
+            print "Next Step+: " + str(cur_time + step_delay)
+            print " "
+            self.next_step_tm = cur_time + step_delay
+            return True
+        return False
 
     def step_motor_dist(self, dist, direction, speed):
         self.step_motor()

@@ -169,4 +169,3 @@ if __name__ == '__main__':
         next_step_Time_r, stepped_r = m_r.step_motor(time.time(), next_step_time_r, GenConfig.MotorDir.FORWARD, 100)
         next_step_Time_l, stepped_l = m_l.step_motor(time.time(), next_step_time_l, GenConfig.MotorDir.REVERSE, 100)
         num_steps_taken = num_steps_taken + 1 if stepped_l else num_steps_taken
-

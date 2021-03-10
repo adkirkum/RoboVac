@@ -8,24 +8,24 @@ class ControlDriverSteppers:
         self.__motor_l = Motor.Motor(20, 13, 19, 0)
         self.__motor_r = Motor.Motor(20, 23, 22, 1)
 
-    def turn_then_drive(self, distance, degrees, direction: RotateDir):
-        """
-        :integer distance: distance to move in steps
-        :integer degrees: degrees change from current heading
-        :RotateDir direction: disambiguate which way to rotate
-        """
-        steps_per_full_rot = 200    # TODO: This value is probably not correct... just a placeholder
-        steps_for_turn = (steps_per_full_rot * (degrees / 360)) / 2   # Divide by 2 because both motors are turning
-
-        # Do all rotation in place before moving forward
-        if direction == RotateDir.CLOCKWISE:
-            self.__step_motors(steps_for_turn, -steps_for_turn)
-        else:
-            self.__step_motors(-steps_for_turn, steps_for_turn)
-
-        # Now drive forward
-        self.__step_motors(distance, distance)
-        pass
+    # def turn_then_drive(self, distance, degrees, direction: RotateDir):
+    #     """
+    #     :integer distance: distance to move in steps
+    #     :integer degrees: degrees change from current heading
+    #     :RotateDir direction: disambiguate which way to rotate
+    #     """
+    #     steps_per_full_rot = 200    # TODO: This value is probably not correct... just a placeholder
+    #     steps_for_turn = (steps_per_full_rot * (degrees / 360)) / 2   # Divide by 2 because both motors are turning
+    #
+    #     # Do all rotation in place before moving forward
+    #     if direction == RotateDir.CLOCKWISE:
+    #         self.__step_motors(steps_for_turn, -steps_for_turn)
+    #     else:
+    #         self.__step_motors(-steps_for_turn, steps_for_turn)
+    #
+    #     # Now drive forward
+    #     self.__step_motors(distance, distance)
+    #     pass
 
     def turn_and_drive(self, degrees, radius):
         # TODO: Finish this method
