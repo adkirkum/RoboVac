@@ -9,7 +9,6 @@ from Motor import Motor
 import RPi.GPIO as GPIO
 # GPIO Mode (BOARD / BCM)
 
-
 GPIO.setmode(GPIO.BCM)
 
 # set GPIO Pins
@@ -157,24 +156,33 @@ if __name__ == '__main__':
         GPIO.cleanup()
 '''
 if __name__ == '__main__':
-    # driver = ControlDriveSteppers.ControlDriverSteppers()
-    # driver.turn_then_drive(100, 180, ControlDriveSteppers.RotateDir.CLOCKWISE)
-    m_r = Motor(20, 23, 22, 0)
+    driver = ControlDriveSteppers.ControlDriverSteppers()
+    #driver.turn_then_drive(100, 180, ControlDriveSteppers.RotateDir.CLOCKWISE)
+    m_r = Motor(20, 23, 22, 1)
     m_l = Motor(20, 13, 19, 0)
 
-    next_step_time_r = time.time()
-    next_step_time_l = time.time()
-
+    # next_step_time_r = time.time()
+    # next_step_time_l = time.time()
+    m = False #Motor stepped status
     desired_steps = 250
     num_steps_taken = 0
 
     #while num_steps_taken < desired_steps:
-    while True:
+    #while True:
 
         # next_step_Time_r, stepped_r = m_r.step_motor(time.time(), next_step_time_r, GenConfig.MotorDir.FORWARD, 20)
         # next_step_Time_l, stepped_l = m_l.step_motor(time.time(), next_step_time_l, GenConfig.MotorDir.REVERSE, 20)
-        next_step_Time_r = m_r.step_motor(time.time(), m_r.next_step_tm, GenConfig.MotorDir.FORWARD, 100)
-        next_step_Time_l = m_l.step_motor(time.time(), m_l.next_step_tm, GenConfig.MotorDir.REVERSE, 100)
+
+    driver.turn_and_drive(20, 30, "left")
+
+    driver.turn_and_drive(20, 30, "right")
+
+    driver.turn_and_drive(180, 5, "right")
+
+    driver.turn_and_drive(20, 30, "right")
+
+    driver.turn_and_drive(20, 30, "left")
+        #print m_l.steps_taken
 
 
 
