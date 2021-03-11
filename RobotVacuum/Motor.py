@@ -12,12 +12,14 @@ class Motor:
         GPIO.setup(step_pin, GPIO.OUT)
         GPIO.setup(dir_pin, GPIO.OUT)
         self.next_step_tm = 0
+        self.steps_taken = 0
         # TODO: Set up GPIO direction (IN/OUT) here for pins above
 
     # takes input rpm and converts to step delay in seconds
     @staticmethod
     def speed_calc(speed):
-        return 1.8 * (1 / (speed / 60.0)) / 360
+        microstep_divider = 8
+        return 1.8 * (1 / (speed / 60.0)) / 360 / microstep_divider
 
     # TODO: Negate commands for the motor needs to be driven backwards here so we don't have to worry about it later
     # TODO: Probably want to add all motor sequencing into this class
@@ -30,8 +32,13 @@ class Motor:
     def motor_polarity(self, direction):
         return direction if self.motor_index == 0 else not direction
 
-    def step_motor(self, cur_time, next_step_time, direction, speed):
+    def step_motor(self, cur_time, next_step_time, speed):
         # TODO: Finish method to actually step the motors
+        if speed >= 0:
+            direction = GenConfig.MotorDir.REVERSE
+        else:
+            direction = GenConfig.MotorDir.FORWARD
+
         step_delay = self.speed_calc(speed)
         #print step_delay
         # dir_string = "forward" if direction == GenConfig.MotorDir.FORWARD else "reverse"
@@ -43,11 +50,13 @@ class Motor:
             time.sleep(0.000001)
             GPIO.output(self.step_pin, False)
 
-            print "Cur Time:   " + str(cur_time)
-            print "Next Step:  " + str(next_step_time)
-            print "Next Step+: " + str(cur_time + step_delay)
-            print " "
+            # print "Cur Time:   " + str(cur_time)
+            # print "Next Step:  " + str(next_step_time)
+            # print "Next Step+: " + str(cur_time + step_delay)
+            # print " "
             self.next_step_tm = cur_time + step_delay
+            self.steps_taken = self.steps_taken + 1
+
             return True
         return False
 
