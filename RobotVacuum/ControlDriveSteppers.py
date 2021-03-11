@@ -1,7 +1,8 @@
+import time
 from GenConfig import RotateDir
 from GenConfig import MotorDir
 import Motor
-
+#from Motor import Motor
 
 class ControlDriverSteppers:
     def __init__(self):
@@ -27,9 +28,44 @@ class ControlDriverSteppers:
     #     self.__step_motors(distance, distance)
     #     pass
 
-    def turn_and_drive(self, degrees, radius):
-        # TODO: Finish this method
-        pass
+    def turn_and_drive(self, degrees, radius, left_right):
+
+
+        w = 7.75 #width of wheelbase
+         #Turn radius from center of robot
+        speed_o = 50
+        if left_right == "left":
+            Rl = radius - w / 2.0 #calculated radius through left wheel
+            Rr = radius + w / 2.0 #calculated radius through right wheel
+        elif left_right == "right":
+            #print "right"
+            Rl = radius + w / 2.0 #calculated radius through left wheel
+            Rr = radius - w / 2.0 #calculated radius through right wheel
+        speed_L = speed_o*(Rl/radius) #left wheel speed in rpm
+        speed_R = speed_o*(Rr/radius)
+        print(str(speed_L) + "  " + str(speed_R))
+        step_dist = (3.14159265*2)/(200*8) #one step move dist
+        dist_l = ((2 * 3.14159265 * Rl*degrees)/360) /step_dist #linear step distance around arc
+        dist_r = ((2 * 3.14159265 * Rr*degrees)/360) /step_dist
+        done_l = False
+        done_r = False
+        print(str(dist_l))
+        initial_steps_taken_r = self.__motor_r.steps_taken
+        initial_steps_taken_l = self.__motor_l.steps_taken
+
+        while done_l == False and done_r == False:
+        #right wheel speed in rpm
+            if self.__motor_r.steps_taken - initial_steps_taken_r < dist_r:
+                m = self.__motor_r.step_motor(time.time(),self.__motor_r.next_step_tm, speed_R)
+            else:
+                done_r = True
+            #print(str(dist_l-self.__motor_l.steps_taken))
+            if self.__motor_l.steps_taken - initial_steps_taken_l < dist_l:
+                m = self.__motor_l.step_motor(time.time(),self.__motor_l.next_step_tm, speed_L)
+            else:
+                done_l = True
+
+        #pass
 
     @staticmethod
     def __calc_dir(steps):
