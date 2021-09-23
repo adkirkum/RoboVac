@@ -4,13 +4,13 @@ import time
 import GenConfig
 import ControlDriveSteppers
 from Motor import Motor
-
+import DCMotor
 
 import RPi.GPIO as GPIO
+
 # GPIO Mode (BOARD / BCM)
 
 GPIO.setmode(GPIO.BCM)
-
 # set GPIO Pins
 # GPIO_TRIGGER = 26
 # GPIO_ECHO = 20
@@ -155,35 +155,105 @@ if __name__ == '__main__':
         print("Measurement stopped by User")
         GPIO.cleanup()
 '''
+GPIO_TRIGGER = 23
+GPIO_ECHO = 18
+# brush_motor = l293d.DC(13,5,26, force_selection=True)
+# pwm = l293d.PWM(freq=30, cycle=70)
+
+def distance():
+
+    # set Trigger to HIGH
+    GPIO.output(GPIO_TRIGGER, True)
+
+    # set Trigger after 0.01ms to LOW
+    time.sleep(0.00001)
+    GPIO.output(GPIO_TRIGGER, False)
+
+    StartTime = time.time()
+    StopTime = time.time()
+
+    # save StartTime
+    while GPIO.input(GPIO_ECHO) == 0:
+        StartTime = time.time()
+
+    # save time of arrival
+    while GPIO.input(GPIO_ECHO) == 1:
+        StopTime = time.time()
+
+    # time difference between start and arrival
+    TimeElapsed = StopTime - StartTime
+    # multiply with the sonic speed (34300 cm/s)
+    # and divide by 2, because there and back
+    distance = (TimeElapsed * 34300) / 2
+
+    return distance
+
 if __name__ == '__main__':
     driver = ControlDriveSteppers.ControlDriverSteppers()
-    #driver.turn_then_drive(100, 180, ControlDriveSteppers.RotateDir.CLOCKWISE)
-    m_r = Motor(20, 23, 22, 1)
-    m_l = Motor(20, 13, 19, 0)
 
-    # next_step_time_r = time.time()
-    # next_step_time_l = time.time()
-    m = False #Motor stepped status
-    desired_steps = 250
-    num_steps_taken = 0
+    #
+    m_r = Motor(20, 27, 17, 1)
+    m_l = Motor(20, 9, 10, 0)
+    m_DC = DCMotor.DCMotor(13,5,26)
+    # GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
+    # GPIO.setup(GPIO_ECHO, GPIO.IN)
 
-    #while num_steps_taken < desired_steps:
-    #while True:
 
-        # next_step_Time_r, stepped_r = m_r.step_motor(time.time(), next_step_time_r, GenConfig.MotorDir.FORWARD, 20)
-        # next_step_Time_l, stepped_l = m_l.step_motor(time.time(), next_step_time_l, GenConfig.MotorDir.REVERSE, 20)
 
-    driver.turn_and_drive(20, 30, "left")
 
-    driver.turn_and_drive(20, 30, "right")
 
-    driver.turn_and_drive(180, 5, "right")
+    #turn_and_drive(degrees, radius in cm, distance, left_right_straight,speed_LOW,speed_HIGH,microstep_divider):
+    # GPIO.setup(3, GPIO.OUT) #MS
 
-    driver.turn_and_drive(20, 30, "right")
+    GPIO.setup(22, GPIO.OUT) #MS1
+    # GPIO.output(3, False) #
+    GPIO.output(22, True) #MS1 State
+    m_DC.turn_motor(10,75,1)
+    # driver.turn_and_drive(180, 10.5,400, "straight",10,30,2,0.00005)
 
-    driver.turn_and_drive(20, 30, "left")
-        #print m_l.steps_taken
+    #driver.turn_and_drive(180, 20,400, "left",8,10,2,0.00005)
+    #driver.turn_and_drive(180, 10,100, "straight",25,45,4)
+    #driver.turn_and_drive(180, 15,20, "right",6.6,10,4)
 
+    while True:
+        # dist = distance()
+        # print ("Measured Distance = %.1f cm" % dist)
+        # # next_step_time_r = time.time()
+        # # next_step_time_l = time.time()
+        m = False #Motor stepped status
+        desired_steps = 250
+        num_steps_taken = 0
+
+        m_DC.turn_motor(10,75,1)
+        driver.turn_and_drive(180, 10.5,400, "straight",10,10,2,0.00005)
+        # print("turning")
+
+
+        #while num_steps_taken < desired_steps:
+        #while True:
+
+            # next_step_Time_r, stepped_r = m_r.step_motor(time.time(), next_step_time_r, GenConfig.MotorDir.FORWARD, 20)
+            # next_step_Time_l, stepped_l = m_l.step_motor(time.time(), next_step_time_l, GenConfig.MotorDir.REVERSE, 20)
+
+
+        # driver.turn_and_drive(10, 800, "left", 10,15)
+
+        # for i in range(1000):
+            # time.sleep(0.01)
+
+        #
+        #driver.turn_and_drive(20, 30, "right",10,15)
+
+
+        # #
+        # driver.turn_and_drive(20, 30, "right")
+        #
+        # driver.turn_and_drive(20, 30, "left")
+
+
+            #print m_l.steps_taken
+
+        #time.sleep(0.1)
 
 
         #time.sleep(0.001)
