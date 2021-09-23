@@ -47,7 +47,7 @@ class Motor:
         if cur_time >= next_step_time:
             GPIO.output(self.dir_pin, self.motor_polarity(True if direction == GenConfig.MotorDir.FORWARD else False))
             GPIO.output(self.step_pin, True)
-            time.sleep(0.000001)
+            #time.sleep(0.000001)
             GPIO.output(self.step_pin, False)
 
             # print "Cur Time:   " + str(cur_time)
