@@ -1,13 +1,15 @@
+
 import time
 from GenConfig import RotateDir
 from GenConfig import MotorDir
 import Motor
+
 #from Motor import Motor
 
 class ControlDriverSteppers:
     def __init__(self):
-        self.__motor_l = Motor.Motor(20, 13, 19, 0)
-        self.__motor_r = Motor.Motor(20, 23, 22, 1)
+        self.__motor_l = Motor.Motor(20, 27, 17, 0)
+        self.__motor_r = Motor.Motor(20, 9, 10, 1)
 
     # def turn_then_drive(self, distance, degrees, direction: RotateDir):
     #     """
@@ -28,43 +30,78 @@ class ControlDriverSteppers:
     #     self.__step_motors(distance, distance)
     #     pass
 
-    def turn_and_drive(self, degrees, radius, left_right):
+    def turn_and_drive(self, degrees, radius, distance, left_right_straight,speed_LOW,speed_HIGH,microstep_divider,accel):
 
 
-        w = 7.75 #width of wheelbase
+        w = 12.1*2 #width of wheelbase in cm
+        wheel_DIA = 6.7 #wheel diameter in cm
          #Turn radius from center of robot
-        speed_o = 50
-        if left_right == "left":
+
+        if left_right_straight == "left":
             Rl = radius - w / 2.0 #calculated radius through left wheel
             Rr = radius + w / 2.0 #calculated radius through right wheel
-        elif left_right == "right":
+        elif left_right_straight == "right":
             #print "right"
-            Rl = radius + w / 2.0 #calculated radius through left wheel
-            Rr = radius - w / 2.0 #calculated radius through right wheel
-        speed_L = speed_o*(Rl/radius) #left wheel speed in rpm
-        speed_R = speed_o*(Rr/radius)
-        print(str(speed_L) + "  " + str(speed_R))
-        step_dist = (3.14159265*2)/(200*8) #one step move dist
-        dist_l = ((2 * 3.14159265 * Rl*degrees)/360) /step_dist #linear step distance around arc
-        dist_r = ((2 * 3.14159265 * Rr*degrees)/360) /step_dist
-        done_l = False
+            Rl = radius + w / 2.0 #calculated radius through left wheel (cm)
+            Rr = radius - w / 2.0 #calculated radius through right wheel (cm)
+
+
+
+        step_dist = (3.14159265*wheel_DIA)/(200*microstep_divider) #one step move dist (cm/step)
+        if left_right_straight == "straight":
+            dist_l = distance/step_dist
+            dist_r = distance/step_dist
+            speed_R = speed_LOW
+            speed_ratio_r = 1
+            speed_ratio_l = 1
+            speed_L = speed_R
+        else:
+            dist_l = (( 2*3.14159265 * Rl*degrees)/360) /(step_dist) #arc length for specified number of degrees/step_dist
+            dist_r = (( 2*3.14159265 * Rr*degrees)/360) /(step_dist)
+            speed_R = speed_LOW*(Rr/radius)
+            speed_L = speed_LOW*(Rl/radius)
+            speed_ratio_r= Rr/radius
+            speed_ratio_l= Rl/radius
+
+        done_l = False #Indicators for when the motors are done stepping.
         done_r = False
-        print(str(dist_l))
+        #print(str(dist_l))
         initial_steps_taken_r = self.__motor_r.steps_taken
         initial_steps_taken_l = self.__motor_l.steps_taken
+        k_mult = speed_LOW / speed_HIGH #ratio of low to high speed (right motor)
 
-        while done_l == False and done_r == False:
+        n_mult = speed_LOW / speed_HIGH #ratio of low to high speed (left motor)
+
+        # while done_l == False and done_r == False:
+            #print n
+
+
+            #print(str(k_mult) + "  " + str(time.time()) +"  "+ str(self.__motor_r.next_step_tm))
         #right wheel speed in rpm
-            if self.__motor_r.steps_taken - initial_steps_taken_r < dist_r:
-                m = self.__motor_r.step_motor(time.time(),self.__motor_r.next_step_tm, speed_R)
-            else:
-                done_r = True
-            #print(str(dist_l-self.__motor_l.steps_taken))
-            if self.__motor_l.steps_taken - initial_steps_taken_l < dist_l:
-                m = self.__motor_l.step_motor(time.time(),self.__motor_l.next_step_tm, speed_L)
-            else:
-                done_l = True
 
+        if self.__motor_r.steps_taken - initial_steps_taken_r < dist_r:
+            m = self.__motor_r.step_motor(time.time(),self.__motor_r.next_step_tm, speed_R)
+            if k_mult<1:
+                k_mult=k_mult+accel
+            else:
+                k_mult=1
+
+            speed_R = speed_HIGH*(speed_ratio_r)*(k_mult)
+
+        else:
+            done_r = True
+        #print(str(dist_l-self.__motor_l.steps_taken))
+        if self.__motor_l.steps_taken - initial_steps_taken_l < dist_l:
+            m = self.__motor_l.step_motor(time.time(),self.__motor_l.next_step_tm, speed_L)
+            if n_mult<1:
+                n_mult=n_mult+accel
+            else:
+                n_mult=1
+            speed_L = speed_HIGH*(speed_ratio_l)*(n_mult) #left wheel speed in rpm
+
+        else:
+            done_l = True
+        print(str(speed_L)+" "+str(speed_R) +" desired:" +str(dist_l) + " initial steps:" + str(initial_steps_taken_l)+ " current_steps:" +str(self.__motor_l.steps_taken))
         #pass
 
     @staticmethod
