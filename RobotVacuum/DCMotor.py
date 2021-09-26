@@ -22,18 +22,11 @@ class DCMotor:
             GPIO.output(self.input1_pin, GPIO.HIGH)
             GPIO.output(self.input2_pin, GPIO.LOW)
 
-        # GPIO.setmode(GPIO.BCM)
-        # GPIO.setwarnings(False)
-
-        # Motor1 = {'EN': 13, 'input1': 5, 'input2': 26}
-
         EN1 = GPIO.PWM(self.en_pin, frequency)
         # print("duty cycle set to 100")
         #EN2 = GPIO.PWM(Motor2['EN'], 100)
 
         EN1.start(duty_cycle)
-        #EN2.start(0)
-
 
         # print (x)
         EN1.ChangeDutyCycle(duty_cycle) #start at 15
@@ -42,32 +35,10 @@ class DCMotor:
         # print("frequency set to "+ str(frequency))
 
     def stop_motor(self):
-        EN1 = GPIO.PWM(self.en_pin, 100)
-        EN1.ChangeDutyCycle(0)
-        EN1.ChangeFrequency(frequency)
+        # EN1 = GPIO.PWM(self.en_pin, 100)
+        # EN1.ChangeDutyCycle(0)
+        # EN1.ChangeFrequency(frequency)
         GPIO.output(self.input1_pin, GPIO.LOW)
         GPIO.output(self.input2_pin, GPIO.LOW)
-
-# sleep(5)
-
-    # for x in range(40, 100):
-    #     print ("BACKWARD MOTION")
-    #     EN1.ChangeDutyCycle(x)
-    #     # EN1.ChangeFrequency()
-    # #    EN2.ChangeDutyCycle(x)
-    #
-    #     GPIO.output(Motor1['input1'], GPIO.LOW)
-    #     GPIO.output(Motor1['input2'], GPIO.HIGH)
-    #
-    # #    GPIO.output(Motor2['input1'], GPIO.LOW)
-    # #    GPIO.output(Motor2['input2'], GPIO.HIGH)
-    #
-    #     sleep(0.1)
-    #
-    # print ("STOP")
-    # EN1.ChangeDutyCycle(0)
-    # #EN2.ChangeDutyCycle(0)
-    #
-    # sleep(5)
 
 # GPIO.cleanup()
