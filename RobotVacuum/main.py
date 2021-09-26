@@ -190,7 +190,6 @@ def distance():
 
 if __name__ == '__main__':
     driver = ControlDriveSteppers.ControlDriverSteppers()
-
     #
     m_r = Motor(20, 27, 17, 1)
     m_l = Motor(20, 9, 10, 0)
@@ -198,24 +197,20 @@ if __name__ == '__main__':
     # GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
     # GPIO.setup(GPIO_ECHO, GPIO.IN)
 
-
-
-
-
     #turn_and_drive(degrees, radius in cm, distance, left_right_straight,speed_LOW,speed_HIGH,microstep_divider):
     # GPIO.setup(3, GPIO.OUT) #MS
 
     GPIO.setup(22, GPIO.OUT) #MS1
     # GPIO.output(3, False) #
     GPIO.output(22, True) #MS1 State
-    m_DC.turn_motor(10,75,1)
+    # m_DC.turn_motor(10,75,1)
     # driver.turn_and_drive(180, 10.5,400, "straight",10,30,2,0.00005)
 
     #driver.turn_and_drive(180, 20,400, "left",8,10,2,0.00005)
     #driver.turn_and_drive(180, 10,100, "straight",25,45,4)
     #driver.turn_and_drive(180, 15,20, "right",6.6,10,4)
-
-    while True:
+    k=0
+    while k<1:
         # dist = distance()
         # print ("Measured Distance = %.1f cm" % dist)
         # # next_step_time_r = time.time()
@@ -224,10 +219,15 @@ if __name__ == '__main__':
         desired_steps = 250
         num_steps_taken = 0
 
-        m_DC.turn_motor(10,75,1)
-        driver.turn_and_drive(180, 10.5,400, "straight",10,10,2,0.00005)
+        # m_DC.turn_motor(0.75,100,1)
+        #BUG: Cannot set radius to 12.1 (width of robot)
+        driver.turn_and_drive(180, 12.2,100, "str",5,20,1,0.00001)
+        driver.turn_and_drive(180, 12.2,100, "cw",20,20,1,0.00001)
+        print "Hello!"
+        driver.turn_and_drive(180, 12.2,100, "str",20,5,1,0.000005)
+        # driver.turn_and_drive(180, 12.1,100, "straight",1,7,1,0.00001)
         # print("turning")
-
+        k=k+1
 
         #while num_steps_taken < desired_steps:
         #while True:
@@ -244,7 +244,7 @@ if __name__ == '__main__':
         #
         #driver.turn_and_drive(20, 30, "right",10,15)
 
-
+        print k
         # #
         # driver.turn_and_drive(20, 30, "right")
         #
@@ -257,4 +257,5 @@ if __name__ == '__main__':
 
 
         #time.sleep(0.001)
+    m_DC.stop_motor()
     GPIO.cleanup()
