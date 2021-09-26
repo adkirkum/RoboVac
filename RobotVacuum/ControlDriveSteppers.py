@@ -37,10 +37,10 @@ class ControlDriverSteppers:
         wheel_DIA = 6.7 #wheel diameter in cm
          #Turn radius from center of robot
 
-        if left_right_straight == "left":
+        if left_right_straight == "ccw":
             Rl = radius - w / 2.0 #calculated radius through left wheel
             Rr = radius + w / 2.0 #calculated radius through right wheel
-        elif left_right_straight == "right":
+        elif left_right_straight == "cw":
             #print "right"
             Rl = radius + w / 2.0 #calculated radius through left wheel (cm)
             Rr = radius - w / 2.0 #calculated radius through right wheel (cm)
@@ -48,7 +48,7 @@ class ControlDriverSteppers:
 
 
         step_dist = (3.14159265*wheel_DIA)/(200*microstep_divider) #one step move dist (cm/step)
-        if left_right_straight == "straight":
+        if left_right_straight == "str":
             dist_l = distance/step_dist
             dist_r = distance/step_dist
             speed_R = speed_LOW
@@ -66,41 +66,44 @@ class ControlDriverSteppers:
         done_l = False #Indicators for when the motors are done stepping.
         done_r = False
         #print(str(dist_l))
-        initial_steps_taken_r = self.__motor_r.steps_taken
+        initial_steps_taken_r = self.__motor_r.steps_taken #steps taken at beginning of loop, point in time
         initial_steps_taken_l = self.__motor_l.steps_taken
         k_mult = speed_LOW / speed_HIGH #ratio of low to high speed (right motor)
-
         n_mult = speed_LOW / speed_HIGH #ratio of low to high speed (left motor)
 
-        # while done_l == False and done_r == False:
+        while done_l == False and done_r == False:
             #print n
 
 
             #print(str(k_mult) + "  " + str(time.time()) +"  "+ str(self.__motor_r.next_step_tm))
         #right wheel speed in rpm
 
-        if self.__motor_r.steps_taken - initial_steps_taken_r < dist_r:
-            m = self.__motor_r.step_motor(time.time(),self.__motor_r.next_step_tm, speed_R)
-            if k_mult<1:
-                k_mult=k_mult+accel
+            if self.__motor_r.steps_taken - initial_steps_taken_r < dist_r: #if under desired number of steps
+                m = self.__motor_r.step_motor(time.time(),self.__motor_r.next_step_tm, speed_R)
+                if k_mult<1:
+                    k_mult=k_mult+accel
+                elif k_mult>1:
+                    k_mult=k_mult-accel
+                else:
+                    k_mult=1
+
+                speed_R = speed_HIGH*(speed_ratio_r)*(k_mult)
+
             else:
-                k_mult=1
+                done_r = True
+            #print(str(dist_l-self.__motor_l.steps_taken))
+            if self.__motor_l.steps_taken - initial_steps_taken_l < dist_l:
+                m = self.__motor_l.step_motor(time.time(),self.__motor_l.next_step_tm, speed_L)
+                if n_mult<1:
+                    n_mult=n_mult+accel
+                elif n_mult>1:
+                    n_mult=n_mult-accel
+                else:
+                    n_mult=1
+                speed_L = speed_HIGH*(speed_ratio_l)*(n_mult) #left wheel speed in rpm
 
-            speed_R = speed_HIGH*(speed_ratio_r)*(k_mult)
-
-        else:
-            done_r = True
-        #print(str(dist_l-self.__motor_l.steps_taken))
-        if self.__motor_l.steps_taken - initial_steps_taken_l < dist_l:
-            m = self.__motor_l.step_motor(time.time(),self.__motor_l.next_step_tm, speed_L)
-            if n_mult<1:
-                n_mult=n_mult+accel
             else:
-                n_mult=1
-            speed_L = speed_HIGH*(speed_ratio_l)*(n_mult) #left wheel speed in rpm
-
-        else:
-            done_l = True
+                done_l = True
         print(str(speed_L)+" "+str(speed_R) +" desired:" +str(dist_l) + " initial steps:" + str(initial_steps_taken_l)+ " current_steps:" +str(self.__motor_l.steps_taken))
         #pass
 

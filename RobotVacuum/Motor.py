@@ -19,7 +19,7 @@ class Motor:
     @staticmethod
     def speed_calc(speed):
         microstep_divider = 8
-        return 1.8 * (1 / (speed / 60.0)) / 360 / microstep_divider
+        return abs(1.8 * (1 / (speed / 60.0)) / 360 / microstep_divider)
 
     # TODO: Negate commands for the motor needs to be driven backwards here so we don't have to worry about it later
     # TODO: Probably want to add all motor sequencing into this class
