@@ -1,5 +1,4 @@
 # Libraries
-
 import time
 import GenConfig
 import ControlDriveSteppers
@@ -160,6 +159,7 @@ GPIO_ECHO = 18
 # brush_motor = l293d.DC(13,5,26, force_selection=True)
 # pwm = l293d.PWM(freq=30, cycle=70)
 
+
 def distance():
 
     # set Trigger to HIGH
@@ -200,6 +200,7 @@ if __name__ == '__main__':
     #turn_and_drive(degrees, radius in cm, distance, left_right_straight,speed_LOW,speed_HIGH,microstep_divider):
     # GPIO.setup(3, GPIO.OUT) #MS
 
+
     GPIO.setup(22, GPIO.OUT) #MS1
     # GPIO.output(3, False) #
     GPIO.output(22, True) #MS1 State
@@ -210,7 +211,8 @@ if __name__ == '__main__':
     #driver.turn_and_drive(180, 10,100, "straight",25,45,4)
     #driver.turn_and_drive(180, 15,20, "right",6.6,10,4)
     k=0
-    while k<1:
+    while True:
+
         # dist = distance()
         # print ("Measured Distance = %.1f cm" % dist)
         # # next_step_time_r = time.time()
@@ -218,13 +220,28 @@ if __name__ == '__main__':
         m = False #Motor stepped status
         desired_steps = 250
         num_steps_taken = 0
-
+        key = raw_input("direction:\n")
+        top_spd_str = 20
+        top_spd_str_back = 30
+        if key == "w":
+            driver.turn_and_drive(720, 20,140, "str",1,top_spd_str,1,0.00001)
+            driver.turn_and_drive(720, 20,140, "str",top_spd_str,1,1,0.00001)
+        elif key == "a":
+            driver.turn_and_drive(20, 20,600, "ccw",4,15,1,0.00001)
+            driver.turn_and_drive(20, 20,600, "ccw",15,4,1,0.00001)
+        elif key == "s":
+            driver.turn_and_drive(720, 20,140, "str",-1,-top_spd_str_back,1,0.00001)
+            driver.turn_and_drive(720, 20,140, "str",-top_spd_str_back,-1,1,0.00001)
+        elif key == "d":
+            driver.turn_and_drive(20, 20,600, "cw",4,15,1,0.00001)
+            driver.turn_and_drive(20, 20,600, "cw",15,4,1,0.00001)
         # m_DC.turn_motor(0.75,100,1)
         #BUG: Cannot set radius to 12.1 (width of robot)
-        driver.turn_and_drive(180, 12.2,100, "str",5,20,1,0.00001)
-        driver.turn_and_drive(180, 12.2,100, "cw",20,20,1,0.00001)
+        # driver.turn_and_drive(720, 20,600, "str",1,100,1,0.00001)
+
+        # driver.turn_and_drive(180, 12.2,100, "cw",20,20,1,0.00001)
         print "Hello!"
-        driver.turn_and_drive(180, 12.2,100, "str",20,5,1,0.000005)
+        # driver.turn_and_drive(180, 12.2,100, "str",20,5,1,0.000005)
         # driver.turn_and_drive(180, 12.1,100, "straight",1,7,1,0.00001)
         # print("turning")
         k=k+1
