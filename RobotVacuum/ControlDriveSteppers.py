@@ -48,9 +48,6 @@ class ControlDriverSteppers:
 
 
 
-        w = 12.1*2 #width of wheelbase in cm
-        wheel_DIA = 6.7 #wheel diameter in cm
-         #Turn radius from center of robot
     def turn_and_drive(self, degrees, radius, distance, left_right_straight,speed_LOW,speed_HIGH,microstep_divider,accel):
 
         if left_right_straight == "ccw":
