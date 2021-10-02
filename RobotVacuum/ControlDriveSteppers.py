@@ -1,10 +1,22 @@
 
 import time
+import math
 from GenConfig import RotateDir
 from GenConfig import MotorDir
 import Motor
 
-#from Motor import Motor
+w = 12.75*2 #width of whole robot's wheelbase
+wheel_DIA = 6.75 #wheel diameter in cm
+
+#Basic math/unit conversion functions for when we want to do kinematics
+def cos_d(deg):
+    return math.cos(math.radians(deg))
+def sin_d(deg):
+    return math.sin(math.radians(deg))
+def rad(deg):
+    return math.radians(deg)
+def cmps_to_rpm(cmps):
+    return (cmps/(3.14159265*wheel_DIA))*60
 
 class ControlDriverSteppers:
     def __init__(self):
@@ -30,20 +42,24 @@ class ControlDriverSteppers:
     #     self.__step_motors(distance, distance)
     #     pass
 
-    def turn_and_drive(self, degrees, radius, distance, left_right_straight,speed_LOW,speed_HIGH,microstep_divider,accel):
+    def step_motor_at_speed(self,speed):  #Function so I can test step accuracy with a stopwatch and make sure step speed is correct with rpm input
+        while True:
+            m = self.__motor_r.step_motor(time.time(),self.__motor_r.next_step_tm, speed)
+
 
 
         w = 12.1*2 #width of wheelbase in cm
         wheel_DIA = 6.7 #wheel diameter in cm
          #Turn radius from center of robot
+    def turn_and_drive(self, degrees, radius, distance, left_right_straight,speed_LOW,speed_HIGH,microstep_divider,accel):
 
         if left_right_straight == "ccw":
-            Rl = radius - w / 2.0 #calculated radius through left wheel
-            Rr = radius + w / 2.0 #calculated radius through right wheel
+            Rl = (radius - w / 2.0) #calculated radius through left wheel
+            Rr = (radius + w / 2.0) #calculated radius through right wheel
         elif left_right_straight == "cw":
             #print "right"
-            Rl = radius + w / 2.0 #calculated radius through left wheel (cm)
-            Rr = radius - w / 2.0 #calculated radius through right wheel (cm)
+            Rl = (radius + w / 2.0) #calculated radius through left wheel (cm)
+            Rr = (radius - w / 2.0) #calculated radius through right wheel (cm)
 
 
 
@@ -78,7 +94,7 @@ class ControlDriverSteppers:
             #print(str(k_mult) + "  " + str(time.time()) +"  "+ str(self.__motor_r.next_step_tm))
         #right wheel speed in rpm
 
-            if self.__motor_r.steps_taken - initial_steps_taken_r < dist_r: #if under desired number of steps
+            if abs(self.__motor_r.steps_taken - initial_steps_taken_r) < abs(dist_r): #if under desired number of steps
                 m = self.__motor_r.step_motor(time.time(),self.__motor_r.next_step_tm, speed_R)
                 if k_mult<1:
                     k_mult=k_mult+accel
@@ -92,8 +108,8 @@ class ControlDriverSteppers:
             else:
                 done_r = True
             #print(str(dist_l-self.__motor_l.steps_taken))
-            if self.__motor_l.steps_taken - initial_steps_taken_l < dist_l:
-                m = self.__motor_l.step_motor(time.time(),self.__motor_l.next_step_tm, speed_L)
+            if abs(self.__motor_l.steps_taken - initial_steps_taken_l) < abs(dist_l):
+                n = self.__motor_l.step_motor(time.time(),self.__motor_l.next_step_tm, speed_L)
                 if n_mult<1:
                     n_mult=n_mult+accel
                 elif n_mult>1:
