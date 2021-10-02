@@ -127,3 +127,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+RobotVacuum/RPi/__init__.py
+RobotVacuum/RPi/GPIO.py
